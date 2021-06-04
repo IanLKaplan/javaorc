@@ -28,7 +28,7 @@ struct<symbol:string,close:double,date:timestamp,shortable:boolean>
 References
 The intent of the javaorc code is to abstract the internal structures needed two write and read ORC files into a simple interface. If you would like to delve into the javaorc code the referneces below are useful in explaining the ORC format.
 
-l. Apache ORC types: https://orc.apache.org/docs/types.html
-l. Apache ORC documentation: https://orc.apache.org/docs/core-java.html
-l. ORC Core: https://javadoc.io/doc/org.apache.orc/orc-core/latest/index.html
-l. HIVE Storage API: https://orc.apache.org/api/hive-storage-api/index.html
+* Apache ORC types: https://orc.apache.org/docs/types.html
+* Apache ORC documentation: https://orc.apache.org/docs/core-java.html
+* ORC Core: https://javadoc.io/doc/org.apache.orc/orc-core/latest/index.html
+* HIVE Storage API: https://orc.apache.org/api/hive-storage-api/index.html
