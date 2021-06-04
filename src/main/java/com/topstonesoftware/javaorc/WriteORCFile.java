@@ -215,6 +215,16 @@ public class WriteORCFile extends ORCFileIO implements AutoCloseable {
         }
     }
 
+    private void setDateColumnVector(Object colVal, String fieldName, DateColumnVector dateVector, int rowNum) throws ORCFileException {
+        if (colVal instanceof Date) {
+            Date dateVal = (Date)colVal;
+            long epochTime = dateVal.getTime();
+            dateVector.vector[rowNum] = epochTime;
+        } else {
+            throw new ORCFileException(orcExceptionMsg("Date type expected for field ",  fieldName, rowNum));
+        }
+    }
+
 
     private void setTimestampVector(Object colVal, String fieldName, TimestampColumnVector timestampVector, int rowNum) throws ORCFileException {
         if (colVal instanceof Date) {
@@ -766,8 +776,16 @@ public class WriteORCFile extends ORCFileIO implements AutoCloseable {
         } else {
             switch (vector.type) {
                 case LONG -> {
-                    LongColumnVector longVector = (LongColumnVector) vector;
-                    setLongColumnVector(colVal, fieldName, longVector, rowNum);
+                    if (vector instanceof DateColumnVector) {
+                        // When a DateColumnVector epoch time value is written to the ORC file, it is incorrectly
+                        // stored as a 32 bit int, instead of a 64 bit long. When this value is read from the
+                        // ORC file, the epoch value is incorrect.  Until this error is fixed in the ORC Writer
+                        // the DateColumnVector is not supported.
+                        throw new ORCFileException("The date column type is not supported. Please use the timestamp type for field " + fieldName);
+                    } else {
+                        LongColumnVector longVector = (LongColumnVector) vector;
+                        setLongColumnVector(colVal, fieldName, longVector, rowNum);
+                    }
                 }
                 case DOUBLE -> {
                     DoubleColumnVector doubleVector = (DoubleColumnVector)vector;

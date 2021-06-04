@@ -402,7 +402,7 @@ public class ReadORCFile extends ORCFileIO implements AutoCloseable {
      */
     private Object readLongVal(ColumnVector colVec, TypeDescription colType, int rowNum) {
         Object colObj = null;
-        if (! colVec.isNull[rowNum]) {
+        if (!colVec.isNull[rowNum]) {
             LongColumnVector longVec = (LongColumnVector) colVec;
             long longVal = longVec.vector[rowNum];
             colObj = longVal;
@@ -410,6 +410,8 @@ public class ReadORCFile extends ORCFileIO implements AutoCloseable {
                 colObj = (int) longVal;
             } else if (colType.getCategory() == TypeDescription.Category.BOOLEAN) {
                 colObj = longVal == 1 ? Boolean.TRUE : Boolean.FALSE;
+            } else if (colType.getCategory() == TypeDescription.Category.DATE) {
+                colObj = new Date(longVal);
             }
         }
         return colObj;
@@ -438,7 +440,7 @@ public class ReadORCFile extends ORCFileIO implements AutoCloseable {
         if (! colVec.isNull[rowNum]) {
             columnObj = switch (colVec.type) {
                 case LONG -> readLongVal(colVec, colType, rowNum);
-                case DOUBLE -> colVec.isNull[rowNum] ? null : ((DoubleColumnVector) colVec).vector[rowNum];
+                case DOUBLE -> ((DoubleColumnVector) colVec).vector[rowNum];
                 case BYTES -> readBytesVal(colVec, colType, rowNum);
                 case DECIMAL -> readDecimalVal(colVec, rowNum);
                 case TIMESTAMP -> readTimestampVal(colVec, colType, rowNum);
