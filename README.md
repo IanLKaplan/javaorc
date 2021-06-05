@@ -21,10 +21,10 @@ The columnar structure of an ORC file is defined by a schema. The schema is cons
        schema.addField("shortable", TypeDescription.createBoolean());
        
 This schema definition will create an ORC file with four columns: 
-l. symbol : a String column 
-l. close : a double column 
-l. date : a timestamp column 
-l. shortable : a boolean columm
+1. symbol : a String column 
+1. close : a double column 
+1. date : a timestamp column 
+1. shortable : a boolean columm
 
 The schema can be printed (via println() or converted to a String):
 
