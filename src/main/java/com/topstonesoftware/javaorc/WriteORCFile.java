@@ -619,7 +619,7 @@ public class WriteORCFile extends ORCFileIO implements AutoCloseable {
             case BYTES -> setStringMapValues(valueList, colVector, offset, fieldName);
             case DECIMAL -> setDecimalMapValues(valueList, colVector, offset, fieldName);
             case TIMESTAMP -> setTimestampMapValues(valueList, colVector, offset, fieldName);
-            default -> throw new ORCFileException("For field " + fieldName + " values must be long, double, String, BigDecimal or Date/Timestamp");
+            default -> throw new ORCFileException("For field " + fieldName + " values must be long, double, String, BigDecimal or Timestamp");
         }
     }
 
