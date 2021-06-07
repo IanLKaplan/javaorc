@@ -58,6 +58,7 @@ Java Type | ORC Column Type
 ----------|----------------
 Integer   | Long
 Long      | Long
+Boolean   | Long
 Double    | Double
 byte[]    | Bytes
 String    | Bytes
@@ -67,6 +68,37 @@ List<Object> | List
 List<Object> | Struct
 Map<Object, Object> | Map
 List<Pair<TypeDescription, Object> | Union
+ 
+There appears to be a bug in the way the ORC core code handles DateColumnVector values. The values are written as long epoch date values, but when the value is read a 32-bit values is read from the ORC file, yielding an incorrect date.  A java.sql.Timestamp value should be used instead of a java.util.Date value.
+       
+### Example:
+       
+The schema below defines an ORC file with three columns:
+1. A String column with the label 'symbol'
+1. A Double column with the label 'close'
+1. A Timestamp column with the label 'date'
+       
+```
+       TypeDescription schema = TypeDescription.createStruct();
+       schema.addField("symbol", TypeDescription.createString());
+       schema.addField("close", TypeDescription.createDouble());
+       schema.addField("date", TypeDescription.createTimestamp());
+```
+
+A ```List<Object>``` object is used to write an ORC file row:
+
+```
+   List<Object> row = new ArrayList<>();
+   ...
+   String symbol = /* initialize with a string value */
+   Double close = /* initialize with a double value */
+   Timestamp date = new Timestamp( date.getTime() );
+   row.add(symbol);
+   row.add(close);
+   row.add(date);
+   orcWriter.writeRow( row );
+   
+```
 
 ## References
 The intent of the javaorc code is to abstract the internal structures needed two write and read ORC files into a simple interface. If you would like to delve into the javaorc code the referneces below are useful in explaining the ORC format.
