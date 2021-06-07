@@ -48,6 +48,26 @@ The WRiteORCFile object is initialized with a String that defines the file path 
       }
 ```
 
+The ```WriteORCFile``` method ```writeRow()``` is passed a list of Java Objects (for example, an ```ArrayList<Object>```).  Each element of the List is written to the associated column.
+
+## Column Types
+
+The following types are supported by _javaorc_
+
+Java Type | ORC Column Type
+----------|----------------
+Integer   | Long
+Long      | Long
+Double    | Double
+byte[]    | Bytes
+String    | Bytes
+BigDecimal | Decimal
+java.sql.Timestamp | Timestamp
+List<Object> | List
+          | Struct
+          | Map
+          | Union
+
 ## References
 The intent of the javaorc code is to abstract the internal structures needed two write and read ORC files into a simple interface. If you would like to delve into the javaorc code the referneces below are useful in explaining the ORC format.
 
