@@ -134,7 +134,29 @@ The types for a list are limited to:
 * Timestamp
        
 ## Struct Column Elements
-An ORC List column consists of Lists where all elements of the list are the same type.  An ORC Struct column 
+An ORC List column consists of Lists where all elements of the list are the same type.  An ORC Struct column is like a C/C++ struct object were there are multiple named fields, possibly with different types. 
+       
+The schema below defines an ORC struct column element with three fields.
+       
+```
+        TypeDescription schema = TypeDescription.createStruct();
+        TypeDescription structDef = TypeDescription.createStruct();
+        structDef.addField("word", TypeDescription.createString());
+        structDef.addField("word_hash", TypeDescription.createInt());
+        structDef.addField("hash_is_odd", TypeDescription.createBoolean());
+        schema.addField("structCol", structDef);
+```
+The three Objects that make up the struct column value are stored in a List<Object>.  Unlike a List column element, each element in the list may have a different type
+       
+```
+       List<Object> row = new ArrayList<>();
+       List<Object> fieldList = new ArrayList<>();
+       fieldList.add(word);
+       fieldList.add(word.hashCode());
+       fieldList.add( (word.hashCode() & 0x1) == 1 ? Boolean.TRUE : Boolean.FALSE );
+       row.add(fieldList);
+       orcWriter.writeRow(row);
+```
 
 ## References
 The intent of the javaorc code is to abstract the internal structures needed two write and read ORC files into a simple interface. If you would like to delve into the javaorc code the referneces below are useful in explaining the ORC format.
