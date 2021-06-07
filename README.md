@@ -1,4 +1,5 @@
 # javaorc
+### by Ian Kaplan, www.topstonesoftware.com, iank@bearcave.com
 A Java library that makes writing and reading ORC files easy.
 
 ## Introduction
@@ -202,6 +203,7 @@ SELECT
   params['value'] AS value
 FROM my_table
 ```
+The complex nature of ORC files and the vast number of combinations that can be used to create a schema makes the _javaorc_ code difficult to exhaustivelyh test.  There are not tests (yet) that explore the limits of the size of column elements. For example, column elememnts with 20K vectors or maps.  The usefulness of such column elements seems questionable, so it may not be a problem that these tests have not been written.
        
 ## Test Code
        
