@@ -209,7 +209,7 @@ The complex nature of ORC files and the vast number of combinations that can be 
        
 Tests have been written for each of the ORC column elements. These tests can provide a reference for writing and reading ORC files.
        
-## References
+## ORC References
               
 The intent of the javaorc code is to abstract the internal structures needed two write and read ORC files into a simple interface. If you would like to delve into the javaorc code the referneces below are useful in explaining the ORC format.
 
@@ -217,3 +217,6 @@ The intent of the javaorc code is to abstract the internal structures needed two
 * Apache ORC documentation: https://orc.apache.org/docs/core-java.html
 * ORC Core: https://javadoc.io/doc/org.apache.orc/orc-core/latest/index.html
 * HIVE Storage API: https://orc.apache.org/api/hive-storage-api/index.html
+       
+## Athena References
+* [The Athena Guide](https://athena.guide/) by Theo Tolv
