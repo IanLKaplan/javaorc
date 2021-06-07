@@ -64,9 +64,9 @@ String    | Bytes
 BigDecimal | Decimal
 java.sql.Timestamp | Timestamp
 List<Object> | List
-          | Struct
-          | Map
-          | Union
+List<Object> | Struct
+Map<Object, Object> | Map
+List<Pair<TypeDescription, Object> | Union
 
 ## References
 The intent of the javaorc code is to abstract the internal structures needed two write and read ORC files into a simple interface. If you would like to delve into the javaorc code the referneces below are useful in explaining the ORC format.
