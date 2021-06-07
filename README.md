@@ -132,6 +132,9 @@ The types for a list are limited to:
 * String
 * BigInteger
 * Timestamp
+       
+## Struct Column Elements
+An ORC List column consists of Lists where all elements of the list are the same type.  An ORC Struct column 
 
 ## References
 The intent of the javaorc code is to abstract the internal structures needed two write and read ORC files into a simple interface. If you would like to delve into the javaorc code the referneces below are useful in explaining the ORC format.
