@@ -274,9 +274,14 @@ public class WriteORCFile extends ORCFileIO implements AutoCloseable {
      * </pre>
      * <p>
      *     A tag value (<pre>tags[rowNum]</pre>) is associated with each field value (<pre>fields[rowNum])</pre>.
-     *     I have not seen an explicit definition for the tag value in the ORC documentation or in the Hive code
-     *     for the UnionColumnVector. The code in this method assumes that the tag value is the
-     *     enumeration value stored in a ColumnVector (<pre>ColumnVector.Type</pre>).
+     *     The tag value serves as an index for the field type. For example, if there are three field types
+     *     defined:
+     * <ol>
+     *     <li>Long</li>
+     *     <li>Double</li>
+     *     <li>String</li>
+     * </ol>
+     * The tag will have a value in the range of [0..2]
      *</p>
      * <p>
      *     The tag value is needed to initialize the ColumnVector since without the tag there is no way to know
