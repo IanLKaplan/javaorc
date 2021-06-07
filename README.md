@@ -99,6 +99,39 @@ A ```List<Object>``` object is used to write an ORC file row:
    orcWriter.writeRow( row );
    
 ```
+## List Column Elements
+An ORC file may have column elements that consists of variable length lists.
+       
+The schema below defines an ORC file with a single column, where each column element is a list.
+       
+In the example below three ORC file rows are written out for the single column ORC file. The first row has a list element that consists of four Long values, the second row has two values and the third row has five values.
+       
+```
+        TypeDescription schema = TypeDescription.createStruct();
+        TypeDescription longListType = TypeDescription.createList(TypeDescription.createLong());
+        schema.addField("long_list", longListType);
+
+       try(var orcWriter = new WriteORCFile(filePathStr, schema)) { 
+           List<Object> row = new ArrayList<>();
+           row.add( Arrays.asList(new Long[]{1L, 2L, 3L, 4L}) );
+           orcWriter.writeRow( row );
+           row.clear();
+           row.add( Arrays.asList(new Long[]{5L, 6L}) );
+           orcWriter.writeRow( row );
+           row.clear();
+           row.add( Arrays.asList(new Long[]{7L, 8L, 9L, 10L, 11L}) );
+           orcWriter.writeRow( row );
+       }
+```
+The types for a list are limited to:
+* Integer
+* Long
+* Boolean
+* Double
+* byte[]
+* String
+* BigInteger
+* Timestamp
 
 ## References
 The intent of the javaorc code is to abstract the internal structures needed two write and read ORC files into a simple interface. If you would like to delve into the javaorc code the referneces below are useful in explaining the ORC format.
