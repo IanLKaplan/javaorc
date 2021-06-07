@@ -190,6 +190,19 @@ The map column element value is taken from a Java Map element (in this case ```H
 ```
 The map column type might be used when there is a set of maps, one for each column element. Each map element in a column must have the same type (e.g., the same key and value type). These map column values could be associated with other column value. For example, the name associaed with a given map.
        
+## Some comments
+       
+The column and element structure that can be defined for an ORC file allows highly complex ORC files to be defined. ORC files are often targeted at SQL engines like Athena or Hive. While vector (array) and struct elements are supported in SQL queries, these queries may not be as efficient as queries on atomic elements (e..g, Integer, String, Double).  
+       
+Apparently Athena does support queries on maps (see [_The Athena Guide: Working with complex types_ by Theo Tolv](https://athena.guide/articles/complex-types/))
+       
+```
+SELECT
+  params['id'] AS id,
+  params['value'] AS value
+FROM my_table
+```
+       
 ## Test Code
        
 Tests have been written for each of the ORC column elements. These tests can provide a reference for writing and reading ORC files.
