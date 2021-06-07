@@ -157,8 +157,45 @@ The three Objects that make up the struct column value are stored in a List<Obje
        row.add(fieldList);
        orcWriter.writeRow(row);
 ```
+## Map Column Element
+       
+The ORC format supports map column elements (e.g., key, value pairs).  The key types are limited to:
+       
+* Long
+* String
+* Double
 
+The map values are limted to:
+       
+* Long
+* String
+* Double
+* BitInteger
+* Timestamp
+       
+The schema definition below has a single map column with a String key and an Integer value.
+
+```
+       TypeDescription schema = TypeDescription.createStruct();
+       TypeDescription map = TypeDescription.createMap(TypeDescription.createString(), TypeDescription.createInt());
+       schema.addField("word_freq", map);
+```
+The map column element value is taken from a Java Map element (in this case ```HashMap<String, Integer>```)       
+```
+       HashMap<String, Integer> wordFreqMap = new HashMap<>();
+       ...
+       List<Object> row = new ArrayList<>();
+       row.add( wordFreqMap);
+       orcWriter.writeRow( row );
+```
+The map column type might be used when there is a set of maps, one for each column element. Each map element in a column must have the same type (e.g., the same key and value type). These map column values could be associated with other column value. For example, the name associaed with a given map.
+       
+## Test Code
+       
+Tests have been written for each of the ORC column elements. These tests can provide a reference for writing and reading ORC files.
+       
 ## References
+              
 The intent of the javaorc code is to abstract the internal structures needed two write and read ORC files into a simple interface. If you would like to delve into the javaorc code the referneces below are useful in explaining the ORC format.
 
 * Apache ORC types: https://orc.apache.org/docs/types.html
