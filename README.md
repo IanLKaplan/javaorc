@@ -220,3 +220,4 @@ The intent of the javaorc code is to abstract the internal structures needed two
        
 ## Athena References
 * [The Athena Guide](https://athena.guide/) by Theo Tolv
+* [AWS Athena documentation](https://docs.aws.amazon.com/athena/index.html)
