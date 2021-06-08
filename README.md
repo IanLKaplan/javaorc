@@ -263,8 +263,46 @@ The code below outlines how a custom S3 ORC file writer could be set for the Wri
            orcWriter.writeRow( row );
        }
 ```
+### The S3AFileSystem FileSystem object
        
-
+In the Hadoop ecosystem there has been some work done on creating an S3 FileSystem object that can be used to build an ORC file Writer object. 
+       
+The FileSystem here is a Hadoop FileSystem object ```org.apache.hadoop.fs.FileSystem``` not the Java ```java.nio.file.FileSystem```  While these two objects share a common class name, they do not share an object hierarchy.
+       
+I have _not_ succeeded in getting the S3AFileSystem based ORC file Writer object to work.  The code below outlines what I understand of the initialization that might be used to create this object.
+       
+```
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.fs.s3a.S3AFileSystem;
+import org.apache.orc.OrcFile;
+import org.apache.orc.TypeDescription;
+import org.apache.orc.Writer;
+  
+ /*
+      Return an ORC file Writer object that can write to the S3 file system.
+   */
+public Writer buildS3OrcWriter(String fileNamePath, TypeDescription schema, String s3InputBucket) throws IOException, URISyntaxException {
+    Configuration configuration = new Configuration();
+    FileSystem fileSystem = new S3AFileSystem();
+    String uriStr = "s3://" + s3InputBucket;
+    fileSystem.initialize(new URI(uriStr), configuration);
+    return OrcFile.createWriter(new Path(fileNamePath),
+            OrcFile.writerOptions(configuration)
+                    .fileSystem(fileSystem)
+                    .setSchema(schema)
+                    .overwrite(true));
+}
+```
+#### References
+       
+*   hadoop-aws API https://javadoc.io/doc/org.apache.hadoop/hadoop-aws/latest/index.html
+*   S3A https://javadoc.io/static/org.apache.hadoop/hadoop-aws/3.3.0/org/apache/hadoop/fs/s3a/S3A.html
+*   S3AFileSystem https://javadoc.io/static/org.apache.hadoop/hadoop-aws/3.3.0/org/apache/hadoop/fs/s3a/S3AFileSystem.html
+*   Hadoop S3A trouble shooting: https://hadoop.apache.org/docs/r3.1.1/hadoop-aws/tools/hadoop-aws/troubleshooting_s3a.html
+*   Configuration https://hadoop.apache.org/docs/current/api/org/apache/hadoop/conf/Configuration.html
+ 
 ## Some comments
        
 The column and element structure that can be defined for an ORC file allows highly complex ORC files to be defined. ORC files are often targeted at SQL engines like Athena or Hive. While vector (array) and struct elements are supported in SQL queries, these queries may not be as efficient as queries on atomic elements (e..g, Integer, String, Double).  
