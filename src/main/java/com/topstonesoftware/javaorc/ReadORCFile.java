@@ -67,7 +67,7 @@ public class ReadORCFile extends ORCFileIO implements AutoCloseable {
         this.orcFilePath = orcFilePath;
     }
 
-    void setOrcFileReader(Reader orcReader) {
+    void setOrcReader(Reader orcReader) {
         orcFileReader = orcReader;
     }
 
