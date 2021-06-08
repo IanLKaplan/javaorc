@@ -317,6 +317,39 @@ FROM my_table
 ```
 The complex nature of ORC files and the vast number of combinations that can be used to create a schema makes the _javaorc_ code difficult to exhaustivelyh test.  There are not tests (yet) that explore the limits of the size of column elements. For example, column elememnts with 20K vectors or maps.  The usefulness of such column elements seems questionable, so it may not be a problem that these tests have not been written.
        
+### Java Modularity
+Summary: Java modules are useless in many cases.
+       
+The _javaorc_ library depends on orc, hive and hadoop jar files.  These jars include an "everything including the kitchen sink" collection of sub-components like the jetty web server.  I have tried to exclude the components that are not used in the pom.xml file, but this is still a less than ideal situation since all library components may interact with the environment that includes the _javaorc_ code.
+       
+What would be great is to have an infrastructure that would only export the three _javaorc_ classes and keep everything else, like random web servers, behind a wall that would not link with other components.  Java 9 introduced the module feature, so I thought that perhaps this was exactly what I was looking for.  
+       
+The module definition in src/main/java/module-info.java was:
+       
+```
+ module com.topstonesoftware.javaorc {
+    requires org.apache.commons.lang3;
+    requires java.sql;
+    requires orc.core;
+    requires hadoop.common;
+    requires hadoop.hdfs.client;
+    requires hive.storage.api;
+    exports com.topstonesoftware.javaorc;
+}
+       
+ ```
+ The code compiled, but when I tried to run it, I ran into JVM execution errors.  These were the result of the infamous split library problem, where a component is included in more than one library.  The runtime errors are:
+  
+```
+the unnamed module reads package org.apache.hadoop.fs from both hadoop.common and hadoop.hdfs.client
+module hadoop.common reads package org.apache.hadoop.fs from both hadoop.hdfs.client and hadoop.common
+module orc.core reads package org.apache.hadoop.fs from both hadoop.hdfs.client and hadoop.common
+module hadoop.hdfs.client reads package org.apache.hadoop.fs from both hadoop.hdfs.client and hadoop.common
+module hive.storage.api reads package org.apache.hadoop.fs from both hadoop.hdfs.client and hadoop.common
+module org.apache.commons.lang3 reads package org.apache.hadoop.fs from both hadoop.hdfs.client and hadoop.common
+```
+Unfortunately it is not uncommon for legacy libraries to include components that are also included in other jars that provide neccessary software.  The strict insistence in the Java module feature that a component be provided by one and only one jar means that Java modules are useless in may cases.
+       
 ## Test Code
        
 Tests have been written for each of the ORC column elements. These tests can provide a reference for writing and reading ORC files.
