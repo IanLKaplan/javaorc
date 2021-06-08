@@ -216,7 +216,7 @@ To avoid ambiguity, the values written to a union type column are written as a `
        Pair<TypeDefinition, Object> intUnionValue = new ImmutablePair<>(unionFieldType, intObj);
        row.add( intUnionValue );
        ...
-       row.writeRow( row );
+       orcWriter.writeRow( row );
 ```
 
 ## The ReadORCFile object 
@@ -243,7 +243,28 @@ The schema for the ORC file being read is returned by the getSchema() method:
 ```
        TypeDescription schema = orcReader.getSchema();
 ```
+   
+## setORCWriter: providing a custom ORC file writer
        
+The _javaorc_ library is designed to make writing ORC files for cloud resources, like AWS Athena, easy.  The work flow might be:
+       
+Read files from AWS S3 ==> Write ORC Files ==> Query ORC file data via Athena SQL
+       
+In this work flow the S3 file reader and the code that writes the ORC file could be resident on a component in the AWS cloud. To support this, an ORC file writer that can write to S3 would be needed.
+      
+Both the ```WriteORCFile``` and ```ReadORCFile``` objects provide public methods that allow a custom ORC file writer or reader to be provided via ```setORCWriter()``` and ```setORCReader()``` methods, respectively.
+       
+The code below outlines how a custom S3 ORC file writer could be set for the WriteORCFile object. Note that the writer is set before the ```writeRow()``` method is called.
+       
+```
+       try(var orcWriter = new WriteORCFile(filePathStr, schema)) {
+           orcWriter.setORCWriter( myS3FileORCWriter );
+           ...
+           orcWriter.writeRow( row );
+       }
+```
+       
+
 ## Some comments
        
 The column and element structure that can be defined for an ORC file allows highly complex ORC files to be defined. ORC files are often targeted at SQL engines like Athena or Hive. While vector (array) and struct elements are supported in SQL queries, these queries may not be as efficient as queries on atomic elements (e..g, Integer, String, Double).  
