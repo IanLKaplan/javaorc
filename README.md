@@ -1,6 +1,6 @@
 # javaorc
 ### by Ian Kaplan, www.topstonesoftware.com, iank@bearcave.com
-A Java library that makes writing and reading ORC files easy.
+Javaorc is a Java library that makes writing and reading ORC files easy.
 
 ## Introduction
 The Optimized Row Columnar (ORC) file format was originally developed for the [Apache Hive](https://hive.apache.org) data warehouse. The ORC format is also used by a number of other data warehouses, including the [Amazon Web Services Athena](https://aws.amazon.com/athena) database and the [Snowflake](https://www.snowflake.com/) data warehouse.
@@ -189,7 +189,36 @@ The map column element value is taken from a Java Map element (in this case ```H
        row.add( wordFreqMap);
        orcWriter.writeRow( row );
 ```
-The map column type might be used when there is a set of maps, one for each column element. Each map element in a column must have the same type (e.g., the same key and value type). These map column values could be associated with other column value. For example, the name associaed with a given map.
+The map column type might be used when there is a set of maps, one for each column element. Each map element in a column must have the same type (e.g., the same key and value type). These map column values could be associated with other column value. For example, a document name could be associated with a map of word frequency key/value pairs. This could be used to build [TF/IDF](https://en.wikipedia.org/wiki/Tf%E2%80%93idf) values for a document set.
+       
+## Union Column Values
+       
+A union column value allows a column to have more than one type. For example, a column could store Long, Double and String values.  Unlike a union in the C programming language, a row column element only stores a single value type.
+       
+The Java code below will create a schema for an ORC file with a single column, with the field name "union".
+       
+```
+       TypeDescription schema = TypeDescription.createStruct();
+       TypeDescription union = TypeDescription.createUnion();
+       union.addUnionChild( TypeDescription.createInt());
+       union.addUnionChild( TypeDescription.createTimestamp());
+       union.addUnionChild( TypeDescription.createString());
+       schema.addField("union", union);
+```
+This union defined in this schema can store row element values with Integer, Timestamp or String values.
+       
+To avoid ambiguity, the values written to a union type column are written as a ```Pair<TypeDescription, Object>```. For example:
+       
+```
+       List<Object> row = new ArrayList<>();
+       ...
+       Object intObj = an integer value
+       Pair<TypeDefinition, Object> intUnionValue = new ImmutablePair<>(unionFieldType, intObj);
+       row.add( intUnionValue );
+       ...
+       row.writeRow( row );
+```
+
        
 ## Some comments
        
