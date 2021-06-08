@@ -219,6 +219,30 @@ To avoid ambiguity, the values written to a union type column are written as a `
        row.writeRow( row );
 ```
 
+## The ReadORCFile object 
+       
+The ReadORCFile object supports reading ORC files. In the _javaorc_ library this class supports the WriteORCFile unit tests.
+       
+Like the WriteORCFile object, the ReadORCFile object implements the AutoClosable interface allowing it to be used within a ```try``` block.
+       
+The code below is a skeleton for code that will read all of the rows within the ORC file.  The ```ReadORCFile``` constructor is passed the path to the ORC file being read.
+       
+The ReadORCFile readRow() method returns a List<Object> object.  Each element in this object corresponds to a column in the ORC file.
+       
+```
+    try(var orcReader = new ReadORCFile(filePathStr)) {
+       ...
+        List<Object> row;
+        while ((row = orcReader.readRow()).size() > 0) {
+             ...
+        }
+    }
+```
+The schema for the ORC file being read is returned by the getSchema() method:
+       
+```
+       TypeDescription schema = orcReader.getSchema();
+```
        
 ## Some comments
        
