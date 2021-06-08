@@ -318,11 +318,11 @@ FROM my_table
 The complex nature of ORC files and the vast number of combinations that can be used to create a schema makes the _javaorc_ code difficult to exhaustivelyh test.  There are not tests (yet) that explore the limits of the size of column elements. For example, column elememnts with 20K vectors or maps.  The usefulness of such column elements seems questionable, so it may not be a problem that these tests have not been written.
        
 ### Java Modularity
-Summary: Java modules are useless in many cases.
+Summary: Java modules are useless in many cases. Java modules require that a component be defined in exactly one place. Modules fail if the Java code uses more than one jar that includes the same component.
        
-The _javaorc_ library depends on orc, hive and hadoop jar files.  These jars include an "everything including the kitchen sink" collection of sub-components like the jetty web server.  I have tried to exclude the components that are not used in the pom.xml file, but this is still a less than ideal situation since all library components may interact with the environment that includes the _javaorc_ code.
+The _javaorc_ library depends on orc, hive and hadoop jar files.  These jars are an "everything including the kitchen sink" collection of sub-components like the jetty web server.  I have tried to exclude the components that are not used in _javaorc_ in the pom.xml file. This is still a less than ideal situation since there may still be library components that interact with the environment that includes the _javaorc_ code.
        
-What would be great is to have an infrastructure that would only export the three _javaorc_ classes and keep everything else, like random web servers, behind a wall that would not link with other components.  Java 9 introduced the module feature, so I thought that perhaps this was exactly what I was looking for.  
+What would be great is to have an infrastructure that would only export the three _javaorc_ classes and keep everything else, like random web servers, behind a wall that would not link with components outside of _javaorc_.  Java 9 introduced the module feature, so I thought that perhaps this was exactly what I was looking for.  Sadly, this turned out to not be the case.
        
 The module definition in src/main/java/module-info.java was:
        
@@ -348,7 +348,9 @@ module hadoop.hdfs.client reads package org.apache.hadoop.fs from both hadoop.hd
 module hive.storage.api reads package org.apache.hadoop.fs from both hadoop.hdfs.client and hadoop.common
 module org.apache.commons.lang3 reads package org.apache.hadoop.fs from both hadoop.hdfs.client and hadoop.common
 ```
-Unfortunately it is not uncommon for legacy libraries to include components that are also included in other jars that provide neccessary software.  The strict insistence in the Java module feature that a component be provided by one and only one jar means that Java modules are useless in may cases.
+Other than cleaning up libraries (which is not possible when using third party libraries), there seems to be no solution to the split library problem.
+       
+Legacy libraries often include components that are also included in other jars that provide neccessary software.  The strict insistence in the Java module feature that a component be provided by one and only one jar means that Java modules are useless for _javaorc_ and, I suspect, many other software components.
        
 ## Test Code
        
