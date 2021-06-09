@@ -63,11 +63,11 @@ public class ReadORCFile extends ORCFileIO implements AutoCloseable {
     private int fileRowNum = 0;
     private boolean readBatch = false;
 
-    ReadORCFile(String orcFilePath) {
+    public ReadORCFile(String orcFilePath) {
         this.orcFilePath = orcFilePath;
     }
 
-    void setOrcReader(Reader orcReader) {
+    public void setOrcReader(Reader orcReader) {
         orcFileReader = orcReader;
     }
 
@@ -102,7 +102,7 @@ public class ReadORCFile extends ORCFileIO implements AutoCloseable {
         }
     }
 
-    TypeDescription getSchema() throws ORCFileException {
+    public TypeDescription getSchema() throws ORCFileException {
         allocateReader();
         if (schema == null) {
             schema = orcFileReader.getSchema();
@@ -465,13 +465,13 @@ public class ReadORCFile extends ORCFileIO implements AutoCloseable {
         }
     }
 
-    long getNumberOfRows() throws ORCFileException {
+    public long getNumberOfRows() throws ORCFileException {
         allocateReader();
         return orcFileReader.getNumberOfRows();
     }
 
 
-    List<Object> readRow() throws ORCFileException {
+    public List<Object> readRow() throws ORCFileException {
         allocateBatch();
         List<Object> row = new ArrayList<>();
         try {

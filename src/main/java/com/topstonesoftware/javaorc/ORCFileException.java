@@ -6,11 +6,11 @@ package com.topstonesoftware.javaorc;
  */
 public class ORCFileException extends Exception {
 
-    ORCFileException(String message) {
+    public ORCFileException(String message) {
         super(message);
     }
 
-    ORCFileException(String message, Throwable cause) {
+    public ORCFileException(String message, Throwable cause) {
         super(message, cause);
     }
 }

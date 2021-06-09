@@ -107,7 +107,7 @@ public class WriteORCFile extends ORCFileIO implements AutoCloseable {
      * @param filePath the path to a file in the local file system.
      * @param schema the ORC schema
      */
-    WriteORCFile(String filePath, TypeDescription schema) {
+    public WriteORCFile(String filePath, TypeDescription schema) {
         this.fileNamePath = filePath;
         this.schema = schema;
         batch = this.schema.createRowBatch();
