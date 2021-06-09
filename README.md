@@ -9,6 +9,18 @@ The ORC format supports the creation of large compressed files with a columnar s
 
 The javaorc library was developed to make writing and reading ORC files simple. With javaorc the programmer does not have to master the details of the ORC data structures.
 
+## Maven Reference
+The javaorc jar file has been uploaded to Maven Central.  To use the pre-built jar add the below to your pom.xml file
+
+```
+        <dependency>
+            <groupId>com.topstonesoftware.javaorc</groupId>
+            <artifactId>javaorc</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>`
+
+```
+
 ## ORC File Structure
 An ORC file consists of a set of one or more columns. Each column has a defined element type. The ORC file format is a hierarchical format that supportes both atomic (Integer, Long, Double) and structured (arrays, structures, maps and unions) column elements.
 
