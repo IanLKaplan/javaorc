@@ -18,7 +18,14 @@ abstract class TestBase {
         if (a.size() == b.size()) {
             listEqual = true;
             for (var i = 0; i < a.size(); i++) {
-                if (! a.get(i).equals(b.get(i))) {
+                Object aElem = a.get(i);
+                Object bElem = b.get(i);
+                if (aElem != null && bElem != null) {
+                    if (!aElem.equals(bElem)) {
+                        listEqual = false;
+                        break;
+                    }
+                } else if ((aElem == null && bElem != null) || (aElem != null && bElem == null) ) {
                     listEqual = false;
                     break;
                 }
