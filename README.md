@@ -345,7 +345,7 @@ The S3AFileSystem requires the Hadoop includes below.  To avoid an undefined cla
 
 #### AWS S3 Authentication
         
-The S3AFileSystem must authenticate with AWS S3.  Credentials for AWS S3 authentication can be provided in the ~/.aws/credentials file or as environment variables.  I generally set the credentials as environment varibles in the ```.bashrc`` file.
+The S3AFileSystem must authenticate with AWS S3.  Credentials for AWS S3 authentication can be provided in the ~/.aws/credentials file or as environment variables.  I generally set the credentials as environment varibles in the ```.bashrc``` file.
                 
 ```
 AWS_ACCESS_KEY_ID= AWS S3 access key
