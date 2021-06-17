@@ -281,7 +281,8 @@ In the Hadoop ecosystem there has been some work done on creating an S3 FileSyst
        
 The FileSystem here is a Hadoop FileSystem object ```org.apache.hadoop.fs.FileSystem``` not the Java ```java.nio.file.FileSystem```  While these two objects share a common class name, they do not share an object hierarchy.
        
-I have _not_ succeeded in getting the S3AFileSystem based ORC file Writer object to work.  The code below outlines what I understand of the initialization that might be used to create this object.
+The code below will create a Hadoop FileSystem object that can write to AWS S3.  The ```fileNamePath``` is the file name in the S3 bucket (e.g., myfile.orc).
+The ```s3Bucket argument is the name of the S3 bucket.
        
 ```
 import org.apache.hadoop.conf.Configuration;
@@ -295,10 +296,10 @@ import org.apache.orc.Writer;
  /*
       Return an ORC file Writer object that can write to the S3 file system.
    */
-public Writer buildS3OrcWriter(String fileNamePath, TypeDescription schema, String s3InputBucket) throws IOException, URISyntaxException {
+public Writer buildS3OrcWriter(String fileNamePath, TypeDescription schema, String s3Bucket) throws IOException, URISyntaxException {
     Configuration configuration = new Configuration();
     FileSystem fileSystem = new S3AFileSystem();
-    String uriStr = "s3://" + s3InputBucket;
+    String uriStr = "s3://" + s3Bucket;
     fileSystem.initialize(new URI(uriStr), configuration);
     return OrcFile.createWriter(new Path(fileNamePath),
             OrcFile.writerOptions(configuration)
@@ -308,13 +309,31 @@ public Writer buildS3OrcWriter(String fileNamePath, TypeDescription schema, Stri
 }
 ```
 #### References
-       
+
+*   S3A docs https://hadoop.apache.org/docs/stable/hadoop-aws/tools/hadoop-aws/index.html 
 *   hadoop-aws API https://javadoc.io/doc/org.apache.hadoop/hadoop-aws/latest/index.html
 *   S3A https://javadoc.io/static/org.apache.hadoop/hadoop-aws/3.3.0/org/apache/hadoop/fs/s3a/S3A.html
 *   S3AFileSystem https://javadoc.io/static/org.apache.hadoop/hadoop-aws/3.3.0/org/apache/hadoop/fs/s3a/S3AFileSystem.html
 *   Hadoop S3A trouble shooting: https://hadoop.apache.org/docs/r3.1.1/hadoop-aws/tools/hadoop-aws/troubleshooting_s3a.html
 *   Configuration https://hadoop.apache.org/docs/current/api/org/apache/hadoop/conf/Configuration.html
- 
+
+#### AWS S3 Authentication
+        
+The S3AFileSystem must authenticate with AWS S3.  Credentials for AWS S3 authentication can be provided in the ~/.aws/credentials file or as environment variables.  I generally set the credentials as environment varibles in the ```.bashrc`` file.
+                
+```
+AWS_ACCESS_KEY_ID= AWS S3 access key
+AWS_SECRET_ACCESS_KEY= AWS S3 secret key
+
+export AWS_ACCESS_KEY_ID
+export AWS_SECRET_ACCESS_KEY
+```
+
+#### Writing to S3
+        
+I have successfully used the Writer object built by ```buildS3OrcWriter()``` to initialize a WriteORCFile object and write to an S3 bucket.  The file (the ```fileNamePath``` argument) will be written to ```mybucket/user/myUserName``` (for example, ```myorcbucket/user/iank```)  I would prefer to omit the user/myUserName prefix, but I have not succeeded in doing this with a call to ```  fileSystem.setWorkingDirectory()```
+
+        
 ## Some comments
        
 The column and element structure that can be defined for an ORC file allows highly complex ORC files to be defined. ORC files are often targeted at SQL engines like Athena or Hive. While vector (array) and struct elements are supported in SQL queries, these queries may not be as efficient as queries on atomic elements (e..g, Integer, String, Double).  
