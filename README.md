@@ -256,7 +256,7 @@ The schema for the ORC file being read is returned by the getSchema() method:
        TypeDescription schema = orcReader.getSchema();
 ```
    
-## setORCWriter: providing a custom ORC file writer
+## setORCWriter: providing a custom ORC file writer for AWS S3
        
 The _javaorc_ library is designed to make writing ORC files for cloud resources, like AWS Athena, easy.  The work flow might be:
        
@@ -316,6 +316,32 @@ public Writer buildS3OrcWriter(String fileNamePath, TypeDescription schema, Stri
 *   S3AFileSystem https://javadoc.io/static/org.apache.hadoop/hadoop-aws/3.3.0/org/apache/hadoop/fs/s3a/S3AFileSystem.html
 *   Hadoop S3A trouble shooting: https://hadoop.apache.org/docs/r3.1.1/hadoop-aws/tools/hadoop-aws/troubleshooting_s3a.html
 *   Configuration https://hadoop.apache.org/docs/current/api/org/apache/hadoop/conf/Configuration.html
+
+#### Maven Dependencies
+        
+The S3AFileSystem requires the Hadoop includes below.  To avoid an undefined class error at runtime, the Jackson library just be included.
+        
+```
+    <properties>
+        <hadoop.version>3.3.0</hadoop.version>
+    </properties>
+        
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>2.12.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-client</artifactId>
+            <version>${hadoop.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-aws</artifactId>
+            <version>${hadoop.version}</version>
+        </dependency>
+```
 
 #### AWS S3 Authentication
         
