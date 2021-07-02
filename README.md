@@ -5,7 +5,9 @@ Javaorc is a Java library that makes writing and reading ORC files easy.
 ## Introduction
 The Optimized Row Columnar (ORC) file format was originally developed for the [Apache Hive](https://hive.apache.org) data warehouse. The ORC format is also used by a number of other data warehouses, including the [Amazon Web Services Athena](https://aws.amazon.com/athena) database and the [Snowflake](https://www.snowflake.com/) data warehouse.
 
-The ORC format supports the creation of large compressed files with a columnar structure. ORC files can serve as logical proxies for relational tables for a system like AWS Athena or Hive. Storing data in ORC files can dramatically increase the performance of data query operations on systems like Athena, where the data that is being queried is stored on AWS S3.
+The ORC format supports the creation of large compressed files with a columnar structure. ORC files can have high degrees of compression compared to JSON or web log files. For example, an ORC file containing web log data can have 50x compression.  
+
+ORC files can serve as logical proxies for relational tables for a system like AWS Athena or Hive. Storing data in ORC files can dramatically increase the performance of data query operations on systems like Athena, where the data that is being queried is stored on AWS S3.
 
 The javaorc library was developed to make writing and reading ORC files simple. With javaorc the programmer does not have to master the details of the ORC data structures.
 
